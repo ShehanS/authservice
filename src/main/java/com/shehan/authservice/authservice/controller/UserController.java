@@ -1,10 +1,10 @@
-package com.shehan.authservice.authservice.contoller;
+package com.shehan.authservice.authservice.controller;
 import com.shehan.authservice.authservice.dto.UserDTO;
 import com.shehan.authservice.authservice.models.AuthenticationRequest;
 import com.shehan.authservice.authservice.models.AuthenticationResponse;
 import com.shehan.authservice.authservice.service.MyUserDetailsService;
 import com.shehan.authservice.authservice.service.UserService;
-import com.shehan.authservice.authservice.models.SystemUser;
+import com.shehan.authservice.authservice.models.User;
 import com.shehan.authservice.authservice.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,18 +33,18 @@ public class UserController {
     private JwtUtil jwtTokenUtil;
     @PostMapping("save")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<SystemUser> createUser(@RequestBody UserDTO userDTO){
+    public Mono<User> createUser(@RequestBody UserDTO userDTO){
         log.debug("Insert {}",userDTO);
         return userService.createUser(userDTO);
     }
 
     @GetMapping("/all")
-    public Flux<SystemUser> findAll(){
+    public Flux<User> findAll(){
         return userService.findAll();
     }
 
     @PostMapping("/find")
-    public Mono<SystemUser> findByUser(@RequestBody AuthenticationRequest login){
+    public Mono<User> findByUser(@RequestBody AuthenticationRequest login){
         return userService.findByUser(login.getUsername(), login.getPassword());
     }
 

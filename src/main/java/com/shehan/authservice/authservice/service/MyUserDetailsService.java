@@ -1,8 +1,8 @@
 package com.shehan.authservice.authservice.service;
 
+import com.shehan.authservice.authservice.models.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
-import com.shehan.authservice.authservice.models.SystemUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +17,12 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        getUser(username);
 
-        return new User("aas","adsas",new ArrayList<>());
+        return new User("foo", "foo", new ArrayList<>());
+    }
+
+    Mono<com.shehan.authservice.authservice.models.User> getUser(String username){
+        return userService.findByUsername(username);
     }
 }

@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 
 @Document(value = "user")
-public class SystemUser implements Serializable {
+public class User implements Serializable {
     @Id
     private String id;
     private String username;
@@ -18,8 +18,8 @@ public class SystemUser implements Serializable {
     private String lastName;
     private String email;
 
-    public SystemUser(){}
-    public SystemUser(String username, String password, String firstName, String lastName, String email) {
+    public User(){}
+    public User(String username, String password, String firstName, String lastName, String email) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
