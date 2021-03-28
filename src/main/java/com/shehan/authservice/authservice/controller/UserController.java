@@ -2,12 +2,14 @@ package com.shehan.authservice.authservice.controller;
 import com.shehan.authservice.authservice.dto.UserDTO;
 import com.shehan.authservice.authservice.models.AuthenticationRequest;
 import com.shehan.authservice.authservice.models.AuthenticationResponse;
-import com.shehan.authservice.authservice.service.MyUserDetailsService;
+import com.shehan.authservice.authservice.models.LoginUser;
+import com.shehan.authservice.authservice.service.LoginUserService;
 import com.shehan.authservice.authservice.service.UserService;
 import com.shehan.authservice.authservice.models.User;
 import com.shehan.authservice.authservice.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,16 +23,16 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class UserController {
     @Autowired
-    private MyUserDetailsService myUserDetailsService;
+    private JwtUtil jwtUtil;
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     private JwtUtil jwtTokenUtil;
+    @Autowired
+    private LoginUserService loginUserService;
     @PostMapping("save")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<User> createUser(@RequestBody UserDTO userDTO){
@@ -48,20 +50,18 @@ public class UserController {
         return userService.findByUser(login.getUsername(), login.getPassword());
     }
 
-
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-        try{
-           authenticationManager.authenticate(
-             new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-
-        }catch (BadCredentialsException e){
-            throw new Exception("Incorrect username or password", e);
-        }
-        final UserDetails userDetails = myUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    @PostMapping(value = "/login")
+    public Mono<ResponseEntity<?>> login(@RequestBody AuthenticationRequest ar) {
+            return loginUserService.findByUsername(ar.getUsername()).map((userDetails) -> {
+            if (ar.getPassword().equals(userDetails.getPassword())) {
+               return ResponseEntity.ok(new AuthenticationResponse(jwtUtil.generateToken(userDetails)));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        }).defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
+
+
 
 
 }

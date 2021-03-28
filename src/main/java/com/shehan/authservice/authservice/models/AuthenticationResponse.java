@@ -1,14 +1,12 @@
 package com.shehan.authservice.authservice.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data @NoArgsConstructor @AllArgsConstructor @ToString
 public class AuthenticationResponse {
-    private final String jwt;
-
-    public AuthenticationResponse(String jwt) {
-        this.jwt = jwt;
-    }
-
-    public String getJwt() {
-        return jwt;
-    }
+ private String token;
 
 }
