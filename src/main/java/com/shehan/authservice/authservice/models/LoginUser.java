@@ -14,8 +14,7 @@ import java.util.stream.Collectors;
 
 
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class LoginUser implements UserDetails {
     private String username;
     private String password;
@@ -51,10 +50,12 @@ public class LoginUser implements UserDetails {
         return false;
     }
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return this.enabled;
     }
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList());
     }

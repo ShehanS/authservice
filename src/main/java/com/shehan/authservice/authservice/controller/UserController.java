@@ -9,13 +9,8 @@ import com.shehan.authservice.authservice.models.User;
 import com.shehan.authservice.authservice.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,22 +28,7 @@ public class UserController {
     private JwtUtil jwtTokenUtil;
     @Autowired
     private LoginUserService loginUserService;
-    @PostMapping("save")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<User> createUser(@RequestBody UserDTO userDTO){
-        log.debug("Insert {}",userDTO);
-        return userService.createUser(userDTO);
-    }
 
-    @GetMapping("/all")
-    public Flux<User> findAll(){
-        return userService.findAll();
-    }
-
-    @PostMapping("/find")
-    public Mono<User> findByUser(@RequestBody AuthenticationRequest login){
-        return userService.findByUser(login.getUsername(), login.getPassword());
-    }
 
     @PostMapping(value = "/login")
     public Mono<ResponseEntity<?>> login(@RequestBody AuthenticationRequest ar) {
@@ -59,6 +39,11 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         }).defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
+    @PostMapping("/save")
+    public Mono<LoginUser> save(@RequestBody LoginUser loginUser){
+        return userService.createUser(loginUser);
     }
 
 

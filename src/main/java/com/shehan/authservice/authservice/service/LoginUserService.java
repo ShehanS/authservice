@@ -22,7 +22,7 @@ public class LoginUserService {
         data = new HashMap<>();
 
         //username:passwowrd -> user:user
-        data.put("user", new LoginUser("user", "123", true, Arrays.asList(Role.ROLE_USER)));
+        data.put("test", new LoginUser("test", "test", true, Arrays.asList(Role.ROLE_USER)));
 
         //username:passwowrd -> admin:admin
         data.put("admin", new LoginUser("admin", "123", true, Arrays.asList(Role.ROLE_ADMIN)));
@@ -30,7 +30,12 @@ public class LoginUserService {
 
     public Mono<LoginUser> findByUsername(String username) {
         if (data.containsKey(username)) {
-            return Mono.just(data.get(username));
+
+            Mono<LoginUser> loginUserMono = userService.findByUsername(username);
+            loginUserMono.subscribe(result -> System.out.println(result));
+
+            return  (Mono.just(data.get(username)));
+
         } else {
             return Mono.empty();
         }
